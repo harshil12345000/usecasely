@@ -124,7 +124,7 @@
   max-width: 680px;
   margin: 0 auto;
   width: 100%;
-  padding: 5rem 2rem 4rem;
+  padding: 3rem 2rem 4rem;
 }
 
 .dash-main {
@@ -132,7 +132,7 @@
 }
 
 .hero {
-  margin-bottom: 4rem;
+  margin-bottom: 2.5rem;
 }
 
 .widget-page h1,
@@ -213,13 +213,13 @@ input::placeholder {
 }
 
 .user-section {
-  margin-bottom: 2.5rem;
+  margin-bottom: 1rem;
 }
 
 .input-row {
   display: flex;
   gap: 0;
-  border: 1px solid var(--uc-border);
+  border: 1.5px solid #b8b8b0;
   border-radius: 4px;
   overflow: hidden;
   margin-bottom: 0.75rem;
@@ -230,7 +230,7 @@ input::placeholder {
   font-size: 0.75rem;
   color: var(--uc-gray);
   background: var(--uc-panel);
-  border-right: 1px solid var(--uc-border);
+  border-right: 1.5px solid #b8b8b0;
   white-space: nowrap;
   display: flex;
   align-items: center;
@@ -254,7 +254,7 @@ input::placeholder {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin: 2.5rem 0 1.25rem;
+  margin: 1.5rem 0 1.25rem;
 }
 
 .section-divider .line {
@@ -288,7 +288,7 @@ input::placeholder {
 }
 
 .desc-box {
-  border: 1px solid var(--uc-border);
+  border: 1.5px solid #b8b8b0;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -313,7 +313,7 @@ input::placeholder {
   text-transform: uppercase;
   cursor: pointer;
   transition: opacity 0.15s;
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
   text-align: center;
   text-decoration: none;
 }

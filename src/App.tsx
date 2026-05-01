@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard.tsx";
 import Widget from "./pages/Widget.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Docs from "./pages/Docs.tsx";
+import Manifesto from "./pages/Manifesto.tsx";
 
 const queryClient = new QueryClient();
 
@@ -23,7 +24,8 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/docs" element={<Docs />} />
-          <Route path="/widget" element={<Widget />} />
+          <Route path="/manifesto" element={<Manifesto />} />
+          <Route path="/demo" element={<Widget />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

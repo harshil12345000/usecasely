@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default function Index() {
   return (
@@ -17,7 +18,7 @@ export default function Index() {
 
         <div className="cta-row">
           <Link to="/auth" className="generate-btn">Get started</Link>
-          <Link to="/widget" className="link-btn outlined">Try the demo widget</Link>
+          <Link to="/demo" className="link-btn outlined">Try the demo widget</Link>
         </div>
 
         <section style={{ marginTop: "4rem" }}>
@@ -48,10 +49,7 @@ export default function Index() {
         </section>
       </main>
 
-      <footer className="site-footer">
-        <span className="footer-note">Powered by usecases</span>
-        <Link to="/auth" className="footer-note" style={{ textDecoration: "underline" }}>Sign in</Link>
-      </footer>
+      <Footer />
     </div>
   );
 }

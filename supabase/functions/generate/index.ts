@@ -1,5 +1,4 @@
-// Public edge function: generates personalized use cases for an end-user
-// given a product API key + user context (website or description).
+/// <reference lib="deno.ns" />
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -20,7 +19,7 @@ interface UseCase {
   description: string;
 }
 
-Deno.serve(async (req) => {
+Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -124,7 +123,7 @@ Your job: read the user context carefully, then generate exactly 3 use cases sho
 
 STRICT RULES:
 - Every use case MUST cite a specific signal from the user's content (a job function, a named tool they use, an industry term, a workflow, a pain point). No generic advice.
-- If website content is provided, mine it for concrete details: product names, customer segments, tech stack, team structure, job titles, industry language.
+- If website content is provided, mine it for concrete details: product names, customer segments, what they do, tech stack, team structure, job titles, industry language.
 - Title: ≤ 8 words, verb-first, specific (e.g. "Automate onboarding for fintech compliance teams" not "Save time on onboarding").
 - Description: exactly 2 sentences. Sentence 1 = the concrete problem or workflow. Sentence 2 = how ${product.name} solves it specifically for them.
 - Forbidden: "boost productivity", "save time", "streamline", "leverage", "enhance", "optimize" as standalone claims without specifics.

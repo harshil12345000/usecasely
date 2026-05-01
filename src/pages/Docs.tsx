@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const BASE = "https://api.usecases.dev/v1/generate";
 
@@ -195,7 +196,7 @@ console.log(data.use_cases);`}</pre>
                     <div className="config-label">Or use the hosted preview</div>
                     <div className="config-inner">
                         <p className="docs-text">
-                            Visit <code>{window.location.origin}/widget?key=YOUR_API_KEY</code> to see
+                            Visit <code>{window.location.origin}/demo?key=YOUR_API_KEY</code> to see
                             a full-page preview with your product's context.
                         </p>
                     </div>
@@ -215,10 +216,7 @@ console.log(data.use_cases);`}</pre>
                 </div>
             </main>
 
-            <footer className="site-footer">
-                <span className="footer-note">Powered by usecases</span>
-                <Link to="/dashboard" className="footer-note" style={{ textDecoration: "underline" }}>Dashboard</Link>
-            </footer>
+            <Footer />
         </div>
     );
 }

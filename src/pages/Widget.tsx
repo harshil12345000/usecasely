@@ -1,8 +1,7 @@
-// Public widget / live preview page. Reads ?key=... from the URL.
-// This is the page rendered by your provided UI design.
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const FN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate`;
 
@@ -62,8 +61,8 @@ export default function Widget() {
         const t = window.setTimeout(() => setShown((s) => Math.max(s, i + 1)), 80 + i * 110);
         timers.current.push(t);
       });
-    } catch (e: any) {
-      setError(e.message || "Something went wrong");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -98,8 +97,7 @@ export default function Widget() {
                 display: "flex",
                 alignItems: "center",
                 gap: "0.75rem",
-                maxWidth: "480px",
-                margin: "0 auto",
+                width: "100%",
                 padding: "0.875rem 1.25rem",
                 background: "rgba(220, 38, 38, 0.06)",
                 border: "1.5px solid rgba(220, 38, 38, 0.35)",
@@ -189,10 +187,7 @@ export default function Widget() {
         </section>
       </main>
 
-      <footer className="site-footer">
-        <span className="footer-note">Powered by usecases</span>
-        <Link to="/auth" className="footer-note" style={{ textDecoration: "underline" }}>Sign in</Link>
-      </footer>
+      <Footer />
     </div>
   );
 }

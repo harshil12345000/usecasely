@@ -1,11 +1,12 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { type Session } from "@supabase/supabase-js";
 
 export default function Navbar() {
     const { pathname } = useLocation();
     const nav = useNavigate();
-    const [session, setSession] = useState<any>(null);
+    const [session, setSession] = useState<Session | null>(null);
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data }) => setSession(data.session));
@@ -17,7 +18,8 @@ export default function Navbar() {
     }, [nav, pathname]);
 
     const isDocs = pathname === "/docs";
-    const isDemo = pathname === "/widget";
+    const isManifesto = pathname === "/manifesto";
+    const isDemo = pathname === "/demo";
     const isAuth = pathname === "/auth";
     const isDash = pathname === "/dashboard";
 
@@ -38,11 +40,18 @@ export default function Navbar() {
                     <Link to="/docs" className="badge badge-link" style={{ textDecoration: "none" }}>Docs</Link>
                 )}
 
+                {/* Manifesto */}
+                {isManifesto ? (
+                    <span className="badge">Manifesto</span>
+                ) : (
+                    <Link to="/manifesto" className="badge badge-link" style={{ textDecoration: "none" }}>Manifesto</Link>
+                )}
+
                 {/* Try Demo */}
                 {isDemo ? (
                     <span className="badge">Try Demo</span>
                 ) : (
-                    <Link to="/widget" className="badge badge-link" style={{ textDecoration: "none" }}>Try Demo</Link>
+                    <Link to="/demo" className="badge badge-link" style={{ textDecoration: "none" }}>Try Demo</Link>
                 )}
 
                 {/* Account Action */}
