@@ -21,6 +21,17 @@ export default function Widget() {
 
   useEffect(() => () => { timers.current.forEach(clearTimeout); }, []);
 
+  // Fetch product name once for the personalized helper text.
+  useEffect(() => {
+    if (!apiKey) return;
+    let cancelled = false;
+    fetch(FN_URL, { method: "GET", headers: { "x-api-key": apiKey } })
+      .then((r) => r.ok ? r.json() : null)
+      .then((d) => { if (!cancelled && d?.product_name) setProductName(d.product_name); })
+      .catch(() => { /* silent — falls back to "this product" */ });
+    return () => { cancelled = true; };
+  }, [apiKey]);
+
   const generate = async () => {
     setError(null);
     if (!apiKey) { setError("Missing API key. Add ?key=YOUR_API_KEY to the URL."); return; }
