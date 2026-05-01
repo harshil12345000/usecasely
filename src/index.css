@@ -190,6 +190,36 @@ textarea::placeholder, input::placeholder { color: #c0c0b8; }
   letter-spacing: 0.05em;
 }
 
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 2.5rem 0 1.25rem;
+}
+.section-divider .line {
+  flex: 1;
+  height: 1px;
+  background: var(--uc-border);
+}
+.section-divider .label {
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--uc-gray);
+  white-space: nowrap;
+}
+.section-divider:first-child { margin-top: 0; }
+
+.section-body { padding: 0.25rem 0 0.5rem; }
+
+.field-helper {
+  font-size: 0.7rem;
+  color: var(--uc-gray);
+  margin-bottom: 0.6rem;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+}
+
 .desc-box {
   border: 1px solid var(--uc-border);
   border-radius: 4px;
