@@ -16,6 +16,7 @@ export default function Widget() {
   const [results, setResults] = useState<UseCase[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [shown, setShown] = useState(0);
+  const [productName, setProductName] = useState<string>("");
   const timers = useRef<number[]>([]);
 
   useEffect(() => () => { timers.current.forEach(clearTimeout); }, []);
