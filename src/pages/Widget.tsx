@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { supabase } from "@/integrations/supabase/client";
 
 const FN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate`;
 
@@ -17,9 +18,17 @@ export default function Widget() {
   const [error, setError] = useState<string | null>(null);
   const [shown, setShown] = useState(0);
   const [productName, setProductName] = useState<string>("");
+  const [session, setSession] = useState<any>(null);
   const timers = useRef<number[]>([]);
 
-  useEffect(() => () => { timers.current.forEach(clearTimeout); }, []);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSession(data.session));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => setSession(session));
+    return () => {
+      subscription.unsubscribe();
+      timers.current.forEach(clearTimeout);
+    };
+  }, []);
 
   // Fetch product name once for the personalized helper text.
   useEffect(() => {
@@ -118,7 +127,11 @@ export default function Widget() {
                   <line x1="12" y1="17" x2="12.01" y2="17" />
                 </svg>
                 <p className="hint" style={{ margin: 0, color: "rgba(185,28,28,0.9)" }}>
-                  No API key. <Link to="/auth" style={{ color: "rgb(185,28,28)", fontWeight: 600 }}>Sign in</Link> first to configure your product.
+                  {session ? (
+                    <>No API key provided. <Link to="/dashboard" style={{ color: "rgb(185,28,28)", fontWeight: 600 }}>Go to Dashboard</Link> to pick a product.</>
+                  ) : (
+                    <>No API key. <Link to="/auth" style={{ color: "rgb(185,28,28)", fontWeight: 600 }}>Sign in</Link> first to configure your product.</>
+                  )}
                 </p>
               </div>
             )}
