@@ -18,6 +18,7 @@ export default function Footer() {
                     Founder Profile
                 </a>
                 <Link to="/docs" className="footer-note" style={{ textDecoration: "underline" }}>Docs</Link>
+                <Link to="/pricing" className="footer-note" style={{ textDecoration: "underline" }}>Pricing</Link>
                 <Link to="/demo" className="footer-note" style={{ textDecoration: "underline" }}>Demo</Link>
                 <Link to="/manifesto" className="footer-note" style={{ textDecoration: "underline" }}>Manifesto</Link>
                 <Link to="/auth" className="footer-note" style={{ textDecoration: "underline" }}>Sign in</Link>

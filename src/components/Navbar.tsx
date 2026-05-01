@@ -18,6 +18,7 @@ export default function Navbar() {
     }, [nav, pathname]);
 
     const isDocs = pathname === "/docs";
+    const isPricing = pathname === "/pricing";
     const isManifesto = pathname === "/manifesto";
     const isDemo = pathname === "/demo";
     const isAuth = pathname === "/auth";
@@ -41,6 +42,13 @@ export default function Navbar() {
                     <span className="badge">Docs</span>
                 ) : (
                     <Link to="/docs" className="badge badge-link" style={{ textDecoration: "none" }}>Docs</Link>
+                )}
+
+                {/* Pricing */}
+                {isPricing ? (
+                    <span className="badge">Pricing</span>
+                ) : (
+                    <Link to="/pricing" className="badge badge-link" style={{ textDecoration: "none" }}>Pricing</Link>
                 )}
 
                 {/* Manifesto */}
