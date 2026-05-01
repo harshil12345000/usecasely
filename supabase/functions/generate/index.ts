@@ -22,7 +22,6 @@ interface UseCase {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
-  if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
 
   try {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -31,6 +30,23 @@ Deno.serve(async (req) => {
     if (!LOVABLE_API_KEY || !SUPABASE_URL || !SERVICE_ROLE) {
       return json({ error: "Server not configured" }, 500);
     }
+
+    // GET = lightweight product info lookup by API key (used by widget UI to show product name)
+    if (req.method === "GET") {
+      const apiKey = req.headers.get("x-api-key") || new URL(req.url).searchParams.get("key");
+      if (!apiKey || apiKey.length < 10) return json({ error: "Missing or invalid API key" }, 401);
+      const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
+      const { data: product, error } = await admin
+        .from("products")
+        .select("name")
+        .eq("api_key", apiKey)
+        .maybeSingle();
+      if (error) return json({ error: "Database error" }, 500);
+      if (!product) return json({ error: "Invalid API key" }, 401);
+      return json({ product_name: product.name });
+    }
+
+    if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
 
     // API key from header or body
     let body: any = {};
