@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function Footer() {
     return (
         <footer className="site-footer">
-            <span className="footer-note">Powered by usecases</span>
+            <span className="footer-note">Powered by Usecasely</span>
             <div style={{ display: "flex", gap: "1.25rem", alignItems: "center" }}>
                 <a
                     href="https://www.linkedin.com/in/harshilsavla/"

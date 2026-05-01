@@ -30,7 +30,10 @@ export default function Navbar() {
 
     return (
         <header className="site-header">
-            <Link to="/" className="logo">use<span>cases</span></Link>
+            <Link to="/" className="logo" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <img src="/Usecasely.png" alt="Usecasely Logo" style={{ width: "40px", height: "40px", objectFit: "contain" }} />
+                Usecasely
+            </Link>
             <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
 
                 {/* Docs */}

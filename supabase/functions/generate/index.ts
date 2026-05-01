@@ -30,18 +30,28 @@ Deno.serve(async (req: Request) => {
       return json({ error: "Server not configured" }, 500);
     }
 
+    const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
+    const clientIp = req.headers.get("x-real-ip") || req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+
     // GET = lightweight product info lookup by API key (used by widget UI to show product name)
     if (req.method === "GET") {
       const apiKey = req.headers.get("x-api-key") || new URL(req.url).searchParams.get("key");
-      if (!apiKey || apiKey.length < 10) return json({ error: "Missing or invalid API key" }, 401);
-      const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
+      if (!apiKey || apiKey.length < 10) {
+        await admin.from("audit_logs").insert({ event_type: "auth_failure", ip_address: clientIp, metadata: { method: "GET", reason: "missing_key" } });
+        return json({ error: "Missing or invalid API key" }, 401);
+      }
+
       const { data: product, error } = await admin
         .from("products")
-        .select("name")
+        .select("id, name")
         .eq("api_key", apiKey)
         .maybeSingle();
+
       if (error) return json({ error: "Database error" }, 500);
-      if (!product) return json({ error: "Invalid API key" }, 401);
+      if (!product) {
+        await admin.from("audit_logs").insert({ event_type: "auth_failure", ip_address: clientIp, metadata: { method: "GET", reason: "invalid_key", key_prefix: apiKey.slice(0, 6) } });
+        return json({ error: "Invalid API key" }, 401);
+      }
       return json({ product_name: product.name });
     }
 
@@ -56,6 +66,7 @@ Deno.serve(async (req: Request) => {
       (typeof body.api_key === "string" ? body.api_key : null);
 
     if (!apiKey || typeof apiKey !== "string" || apiKey.length < 10) {
+      await admin.from("audit_logs").insert({ event_type: "auth_failure", ip_address: clientIp, metadata: { method: "POST", reason: "missing_key" } });
       return json({ error: "Missing or invalid API key" }, 401);
     }
 
@@ -70,8 +81,6 @@ Deno.serve(async (req: Request) => {
       return json({ error: "Provide either 'website' or 'description'" }, 400);
     }
 
-    const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
-
     const { data: product, error: prodErr } = await admin
       .from("products")
       .select("id, name, description")
@@ -82,7 +91,28 @@ Deno.serve(async (req: Request) => {
       console.error("DB error:", prodErr);
       return json({ error: "Database error" }, 500);
     }
-    if (!product) return json({ error: "Invalid API key" }, 401);
+    if (!product) {
+      await admin.from("audit_logs").insert({ event_type: "auth_failure", ip_address: clientIp, metadata: { method: "POST", reason: "invalid_key", key_prefix: apiKey.slice(0, 6) } });
+      return json({ error: "Invalid API key" }, 401);
+    }
+
+    // ── Rate Limiting (Simple DB-based check) ──────────────────────────
+    // Limit: 20 generations per 10 minutes per product
+    const { count } = await admin
+      .from("generations")
+      .select("*", { count: "exact", head: true })
+      .eq("product_id", product.id)
+      .gt("created_at", new Date(Date.now() - 10 * 60 * 1000).toISOString());
+
+    if ((count || 0) >= 20) {
+      await admin.from("audit_logs").insert({
+        event_type: "rate_limit_hit",
+        product_id: product.id,
+        ip_address: clientIp,
+        metadata: { current_count: count }
+      });
+      return json({ error: "Rate limit exceeded (20 requests / 10 mins). Please upgrade for higher limits." }, 429);
+    }
 
     // ── Website scraping (native Deno fetch, no external API) ──────────────
     let scrapedContent: string | null = null;
@@ -91,7 +121,7 @@ Deno.serve(async (req: Request) => {
         const normalizedUrl = website.startsWith("http") ? website : `https://${website}`;
         const scrapeRes = await fetch(normalizedUrl, {
           headers: {
-            "User-Agent": "Mozilla/5.0 (compatible; UsecasesBot/1.0; +https://usecases.dev)",
+            "User-Agent": "Mozilla/5.0 (compatible; UsecaselyBot/1.0; +https://usecasely.dev)",
             "Accept": "text/html,application/xhtml+xml",
           },
           signal: AbortSignal.timeout(6000),

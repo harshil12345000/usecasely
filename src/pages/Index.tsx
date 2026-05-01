@@ -27,21 +27,21 @@ export default function Index() {
             <li className="use-case-item shown">
               <span className="uc-num">01</span>
               <div className="uc-content">
-                <div className="uc-title">Configure your product</div>
+                <div className="uc-title">Configure your product - What is it?</div>
                 <div className="uc-desc">Describe what your product does, who it's for, and what it can do — once.</div>
               </div>
             </li>
             <li className="use-case-item shown">
               <span className="uc-num">02</span>
               <div className="uc-content">
-                <div className="uc-title">Drop in the widget or call the API</div>
+                <div className="uc-title">Setup the widget or call the API in less than 5 mins</div>
                 <div className="uc-desc">A single script tag on your onboarding page. Or a REST endpoint with your API key.</div>
               </div>
             </li>
             <li className="use-case-item shown">
               <span className="uc-num">03</span>
               <div className="uc-content">
-                <div className="uc-title">Every user sees use cases for them</div>
+                <div className="uc-title">Every user sees use cases personalized for them</div>
                 <div className="uc-desc">Built from their website or a sentence about their role — not a static list.</div>
               </div>
             </li>
