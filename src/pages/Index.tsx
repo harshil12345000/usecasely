@@ -10,7 +10,7 @@ export default function Index() {
 
       <main className="widget-main">
         <section className="hero" style={{ marginBottom: "3rem" }}>
-          <h1>Use cases that<br/>actually <em>fit</em></h1>
+          <h1>Use cases <em>personalized</em><br/>to users</h1>
           <p className="subtitle">
             Configure your product once. Every user sees suggestions built around their work, not a generic list.
             A drop-in widget and HTTP API powered by AI.
