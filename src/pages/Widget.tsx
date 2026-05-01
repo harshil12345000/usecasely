@@ -79,23 +79,34 @@ export default function Widget() {
 
       <main className="widget-main">
         <section className="hero">
-          <h1>Use cases that<br/>actually <em>fit</em></h1>
+          <h1>Use cases <em>personalized</em><br/>to users</h1>
           <p className="subtitle">Configure your product once. Every user sees suggestions built around their work, not a generic list.</p>
         </section>
 
         <form onSubmit={submit}>
-          <div className="config-block">
-            <div className="config-label">Product context (configured once by you)</div>
-            <div className="config-inner">
-              <p className="hint" style={{ margin: 0 }}>
-                {apiKey
-                  ? <>Using API key <code>{apiKey.slice(0, 10)}…</code></>
-                  : <>No API key. <Link to="/auth">Sign in</Link> to create a product.</>}
-              </p>
-            </div>
+          <div className="section-divider">
+            <span className="line" />
+            <span className="label">Configure your product</span>
+            <span className="line" />
+          </div>
+          <div className="section-body">
+            <p className="hint" style={{ margin: 0 }}>
+              {apiKey
+                ? <>Using API key <code>{apiKey.slice(0, 10)}…</code>{productName ? <> · <strong style={{ fontWeight: 400, color: "var(--uc-black)" }}>{productName}</strong></> : null}</>
+                : <>No API key. <Link to="/auth">Sign in</Link> to create a product.</>}
+            </p>
+          </div>
+
+          <div className="section-divider">
+            <span className="line" />
+            <span className="label">What users see</span>
+            <span className="line" />
           </div>
 
           <div className="user-section">
+            <p className="field-helper">
+              Enter your website to see how {productName || "this product"} helps you
+            </p>
             <div className="input-row">
               <span className="input-prefix">website</span>
               <input
@@ -106,7 +117,7 @@ export default function Widget() {
               />
             </div>
 
-            <div className="or-text">or</div>
+            <div className="or-text">or enter details manually</div>
 
             <div className="desc-box">
               <textarea
