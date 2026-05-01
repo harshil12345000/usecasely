@@ -2,6 +2,7 @@
 // This is the page rendered by your provided UI design.
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
+import Navbar from "@/components/Navbar";
 
 const FN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate`;
 
@@ -72,14 +73,11 @@ export default function Widget() {
 
   return (
     <div className="widget-page">
-      <header className="site-header">
-        <Link to="/" className="logo">use<span>cases</span></Link>
-        <span className="badge">API + Widget</span>
-      </header>
+      <Navbar />
 
       <main className="widget-main">
         <section className="hero">
-          <h1>Use cases <em>personalized</em><br/>to users</h1>
+          <h1>Use cases <em>personalized</em><br />to users</h1>
           <p className="subtitle">Configure your product once. Every user sees suggestions built around their work, not a generic list.</p>
         </section>
 
@@ -90,11 +88,42 @@ export default function Widget() {
             <span className="line" />
           </div>
           <div className="section-body">
-            <p className="hint" style={{ margin: 0 }}>
-              {apiKey
-                ? <>Using API key <code>{apiKey.slice(0, 10)}…</code>{productName ? <> · <strong style={{ fontWeight: 400, color: "var(--uc-black)" }}>{productName}</strong></> : null}</>
-                : <>No API key. <Link to="/auth">Sign in</Link> to create a product.</>}
-            </p>
+            {apiKey ? (
+              <p className="hint" style={{ margin: 0 }}>
+                Using API key <code>{apiKey.slice(0, 10)}…</code>
+                {productName ? <> · <strong style={{ fontWeight: 400, color: "var(--uc-black)" }}>{productName}</strong></> : null}
+              </p>
+            ) : (
+              <div style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.75rem",
+                maxWidth: "480px",
+                margin: "0 auto",
+                padding: "0.875rem 1.25rem",
+                background: "rgba(220, 38, 38, 0.06)",
+                border: "1.5px solid rgba(220, 38, 38, 0.35)",
+                borderRadius: "8px",
+              }}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="rgba(220,38,38,0.85)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ width: "20px", height: "20px", flexShrink: 0 }}
+                >
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+                <p className="hint" style={{ margin: 0, color: "rgba(185,28,28,0.9)" }}>
+                  No API key. <Link to="/auth" style={{ color: "rgb(185,28,28)", fontWeight: 600 }}>Sign in</Link> first to configure your product.
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="section-divider">
@@ -138,7 +167,7 @@ export default function Widget() {
 
           {loading && (
             <div className="loading-state visible">
-              <div className="dots"><span className="dot"/><span className="dot"/><span className="dot"/></div>
+              <div className="dots"><span className="dot" /><span className="dot" /><span className="dot" /></div>
               generating
             </div>
           )}

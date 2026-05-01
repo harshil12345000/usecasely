@@ -85,18 +85,63 @@ Deno.serve(async (req) => {
     }
     if (!product) return json({ error: "Invalid API key" }, 401);
 
-    const systemPrompt = `You generate hyper-personalized use cases for a software product.
+    // ── Website scraping (native Deno fetch, no external API) ──────────────
+    let scrapedContent: string | null = null;
+    if (website) {
+      try {
+        const normalizedUrl = website.startsWith("http") ? website : `https://${website}`;
+        const scrapeRes = await fetch(normalizedUrl, {
+          headers: {
+            "User-Agent": "Mozilla/5.0 (compatible; UsecasesBot/1.0; +https://usecases.dev)",
+            "Accept": "text/html,application/xhtml+xml",
+          },
+          signal: AbortSignal.timeout(6000),
+        });
+        if (scrapeRes.ok) {
+          const html = await scrapeRes.text();
+          // Strip script/style blocks, then all HTML tags, collapse whitespace
+          scrapedContent = html
+            .replace(/<script[\s\S]*?<\/script>/gi, " ")
+            .replace(/<style[\s\S]*?<\/style>/gi, " ")
+            .replace(/<[^>]+>/g, " ")
+            .replace(/&[a-z]+;/g, " ")
+            .replace(/\s+/g, " ")
+            .trim()
+            .slice(0, 3000);
+        }
+      } catch (e) {
+        console.warn("Website scrape failed (silent fallback):", e);
+      }
+    }
 
-PRODUCT NAME: ${product.name}
-PRODUCT DESCRIPTION: ${product.description}
+    // ── System prompt ────────────────────────────────────────────────────────
+    const systemPrompt = `You are an expert at generating hyper-specific, evidence-grounded use cases that show a user exactly how a product fits their actual work.
 
-You will receive context about an end-user (their website or a self-description). Generate 5 use cases for how THIS specific user could use THIS product. Each use case must reference their domain, role, or workflow concretely — never generic advice. Titles are short, action-oriented, and specific. Descriptions are 1–2 sentences, concrete, and tailored.
+PRODUCT: ${product.name}
+PRODUCT CONTEXT: ${product.description}
 
-Return strictly via the provided tool.`;
+Your job: read the user context carefully, then generate exactly 3 use cases showing how THIS user — based on what their website or description reveals about their role, industry, team, or workflows — would benefit from ${product.name}.
 
-    const userPrompt = website
-      ? `User website: ${website}\n${description ? `Extra context: ${description}` : ""}`
-      : `User description: ${description}`;
+STRICT RULES:
+- Every use case MUST cite a specific signal from the user's content (a job function, a named tool they use, an industry term, a workflow, a pain point). No generic advice.
+- If website content is provided, mine it for concrete details: product names, customer segments, tech stack, team structure, job titles, industry language.
+- Title: ≤ 8 words, verb-first, specific (e.g. "Automate onboarding for fintech compliance teams" not "Save time on onboarding").
+- Description: exactly 2 sentences. Sentence 1 = the concrete problem or workflow. Sentence 2 = how ${product.name} solves it specifically for them.
+- Forbidden: "boost productivity", "save time", "streamline", "leverage", "enhance", "optimize" as standalone claims without specifics.
+- Output only via the provided tool. No commentary.`;
+
+    // ── User prompt (with scraped content when available) ─────────────────
+    const userPromptParts: string[] = [];
+    if (scrapedContent) {
+      userPromptParts.push(`WEBSITE URL: ${website}`);
+      userPromptParts.push(`SCRAPED PAGE CONTENT (use this as your primary evidence):\n${scrapedContent}`);
+    } else if (website) {
+      userPromptParts.push(`WEBSITE: ${website} (could not be scraped — use URL context only)`);
+    }
+    if (description) {
+      userPromptParts.push(`USER DESCRIPTION: ${description}`);
+    }
+    const userPrompt = userPromptParts.join("\n\n");
 
     const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -115,14 +160,14 @@ Return strictly via the provided tool.`;
             type: "function",
             function: {
               name: "return_use_cases",
-              description: "Return 5 personalized use cases.",
+              description: "Return exactly 3 hyper-specific, evidence-grounded use cases.",
               parameters: {
                 type: "object",
                 properties: {
                   use_cases: {
                     type: "array",
-                    minItems: 5,
-                    maxItems: 5,
+                    minItems: 3,
+                    maxItems: 3,
                     items: {
                       type: "object",
                       properties: {
@@ -167,7 +212,7 @@ Return strictly via the provided tool.`;
       return json({ error: "Malformed AI response" }, 502);
     }
 
-    const useCases: UseCase[] = (parsed.use_cases || []).slice(0, 5).map((u) => ({
+    const useCases: UseCase[] = (parsed.use_cases || []).slice(0, 3).map((u) => ({
       title: String(u.title || "").slice(0, 200),
       description: String(u.description || "").slice(0, 500),
     }));

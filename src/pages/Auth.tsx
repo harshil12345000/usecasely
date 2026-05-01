@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import Navbar from "@/components/Navbar";
 
 export default function Auth() {
   const nav = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup">(() => {
+    return localStorage.getItem("returning_user") === "true" ? "signin" : "signup";
+  });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,6 +36,7 @@ export default function Auth() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
+      localStorage.setItem("returning_user", "true");
       nav("/dashboard", { replace: true });
     } catch (err: any) {
       toast.error(err.message || "Authentication failed");
@@ -43,10 +47,7 @@ export default function Auth() {
 
   return (
     <div className="auth-page">
-      <header className="site-header">
-        <Link to="/" className="logo">use<span>cases</span></Link>
-        <span className="badge">{mode === "signup" ? "Create account" : "Sign in"}</span>
-      </header>
+      <Navbar />
       <main className="auth-main">
         <h1>{mode === "signup" ? <>Create your <em>account</em></> : <>Welcome <em>back</em></>}</h1>
         <p className="subtitle">Configure products once. Serve personalized use cases to every user.</p>

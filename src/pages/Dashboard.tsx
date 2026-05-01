@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import Navbar from "@/components/Navbar";
 
 interface Product {
   id: string;
@@ -12,6 +13,7 @@ interface Product {
 }
 
 const FN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate`;
+const DESC_PREVIEW = 100; // chars before truncation
 
 export default function Dashboard() {
   const nav = useNavigate();
@@ -21,6 +23,7 @@ export default function Dashboard() {
   const [description, setDescription] = useState("");
   const [creating, setCreating] = useState(false);
   const [revealedKey, setRevealedKey] = useState<string | null>(null);
+  const [expandedDesc, setExpandedDesc] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -66,11 +69,6 @@ export default function Dashboard() {
     load();
   };
 
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    nav("/auth", { replace: true });
-  };
-
   const copy = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success("Copied");
@@ -78,13 +76,7 @@ export default function Dashboard() {
 
   return (
     <div className="dash-page">
-      <header className="site-header">
-        <Link to="/" className="logo">use<span>cases</span></Link>
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-          <span className="badge">Dashboard</span>
-          <button onClick={signOut} className="link-btn">Sign out</button>
-        </div>
-      </header>
+      <Navbar />
 
       <main className="dash-main">
         <section className="hero">
@@ -92,9 +84,69 @@ export default function Dashboard() {
           <p className="subtitle">Each product gets an API key. Drop it into your widget or call the API directly.</p>
         </section>
 
-        <form onSubmit={create} style={{ marginBottom: "3rem" }}>
+        {/* ── Existing products ── */}
+        <div className="results-label">{products.length} product{products.length === 1 ? "" : "s"}</div>
+
+        {loading ? (
+          <p className="subtitle" style={{ marginBottom: "3rem" }}>Loading...</p>
+        ) : products.length === 0 ? (
+          <p className="subtitle" style={{ marginBottom: "3rem" }}>No products yet. Create one below.</p>
+        ) : (
+          <ul className="compact-product-list" style={{ marginBottom: "3rem" }}>
+            {products.map((p) => {
+              const revealed = revealedKey === p.id;
+              const expanded = expandedDesc === p.id;
+              const needsTruncation = p.description.length > DESC_PREVIEW;
+              const descText = expanded || !needsTruncation
+                ? p.description
+                : p.description.slice(0, DESC_PREVIEW) + "…";
+
+              return (
+                <li key={p.id} className="compact-product-row">
+                  <div className="compact-product-top">
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div className="compact-product-name">{p.name}</div>
+                      <p className="compact-product-desc">
+                        {descText}
+                        {needsTruncation && (
+                          <button
+                            className="link-btn"
+                            style={{ marginLeft: "0.35rem" }}
+                            onClick={() => setExpandedDesc(expanded ? null : p.id)}
+                          >
+                            {expanded ? "less" : "more"}
+                          </button>
+                        )}
+                      </p>
+                    </div>
+                    <button onClick={() => remove(p.id)} className="link-btn danger" style={{ flexShrink: 0 }}>Delete</button>
+                  </div>
+
+                  <div className="compact-key-row">
+                    <code>{revealed ? p.api_key : "•".repeat(24)}</code>
+                    <div style={{ display: "flex", gap: "0.5rem", flexShrink: 0 }}>
+                      <button className="link-btn" onClick={() => setRevealedKey(revealed ? null : p.id)}>
+                        {revealed ? "Hide" : "Reveal"}
+                      </button>
+                      <button className="link-btn" onClick={() => copy(p.api_key)}>Copy</button>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        {/* ── New product form ── */}
+        <div className="section-divider" style={{ marginTop: 0 }}>
+          <span className="line" />
+          <span className="label">New product</span>
+          <span className="line" />
+        </div>
+
+        <form onSubmit={create} style={{ marginTop: "1.5rem" }}>
           <div className="config-block">
-            <div className="config-label">New product — name</div>
+            <div className="config-label">Name</div>
             <div className="config-inner">
               <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Acme Notes" required maxLength={200} />
             </div>
@@ -116,67 +168,6 @@ export default function Dashboard() {
             {creating ? "Creating..." : "Create product"}
           </button>
         </form>
-
-        <div className="results-label">{products.length} product{products.length === 1 ? "" : "s"}</div>
-
-        {loading ? (
-          <p className="subtitle">Loading...</p>
-        ) : products.length === 0 ? (
-          <p className="subtitle">No products yet. Create one above.</p>
-        ) : (
-          <ul className="product-list">
-            {products.map((p) => {
-              const revealed = revealedKey === p.id;
-              return (
-                <li key={p.id} className="product-card">
-                  <div className="product-head">
-                    <div>
-                      <h3 className="product-name">{p.name}</h3>
-                      <p className="product-desc">{p.description}</p>
-                    </div>
-                    <button onClick={() => remove(p.id)} className="link-btn danger">Delete</button>
-                  </div>
-
-                  <div className="config-block" style={{ marginTop: "1.25rem", marginBottom: "0.75rem" }}>
-                    <div className="config-label">API key</div>
-                    <div className="config-inner key-row">
-                      <code>{revealed ? p.api_key : "•".repeat(28)}</code>
-                      <div style={{ display: "flex", gap: "0.5rem" }}>
-                        <button className="link-btn" onClick={() => setRevealedKey(revealed ? null : p.id)}>
-                          {revealed ? "Hide" : "Reveal"}
-                        </button>
-                        <button className="link-btn" onClick={() => copy(p.api_key)}>Copy</button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <details className="snippet-details">
-                    <summary>Integration snippets</summary>
-                    <div className="config-label" style={{ marginTop: "1rem" }}>API — POST</div>
-                    <pre className="snippet">{`curl -X POST ${FN_URL} \\
-  -H "Content-Type: application/json" \\
-  -H "x-api-key: ${p.api_key}" \\
-  -d '{"description":"I run growth at a B2B SaaS"}'`}</pre>
-
-                    <div className="config-label" style={{ marginTop: "1rem" }}>Widget — drop-in</div>
-                    <pre className="snippet">{`<div id="usecases-widget"></div>
-<script src="${window.location.origin}/widget.js"
-        data-api-key="${p.api_key}"
-        data-target="#usecases-widget"></script>`}</pre>
-
-                    <p className="hint">
-                      Or visit{" "}
-                      <a href={`/widget?key=${p.api_key}`} target="_blank" rel="noreferrer">
-                        the live preview
-                      </a>{" "}
-                      to test.
-                    </p>
-                  </details>
-                </li>
-              );
-            })}
-          </ul>
-        )}
       </main>
     </div>
   );

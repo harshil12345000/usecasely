@@ -1,16 +1,14 @@
 import { Link } from "react-router-dom";
+import Navbar from "@/components/Navbar";
 
 export default function Index() {
   return (
     <div className="widget-page">
-      <header className="site-header">
-        <Link to="/" className="logo">use<span>cases</span></Link>
-        <span className="badge">API + Widget</span>
-      </header>
+      <Navbar />
 
       <main className="widget-main">
         <section className="hero" style={{ marginBottom: "3rem" }}>
-          <h1>Use cases <em>personalized</em><br/>to users</h1>
+          <h1>Use cases <em>personalized</em><br />to users</h1>
           <p className="subtitle">
             Configure your product once. Every user sees suggestions built around their work, not a generic list.
             A drop-in widget and HTTP API powered by AI.
