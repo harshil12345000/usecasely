@@ -14,7 +14,71 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      generations: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          results: Json
+          user_description: string | null
+          user_website: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          results: Json
+          user_description?: string | null
+          user_website?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          results?: Json
+          user_description?: string | null
+          user_website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generations_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          api_key: string
+          created_at: string
+          description: string
+          id: string
+          name: string
+          owner_id: string
+          updated_at: string
+        }
+        Insert: {
+          api_key?: string
+          created_at?: string
+          description: string
+          id?: string
+          name: string
+          owner_id: string
+          updated_at?: string
+        }
+        Update: {
+          api_key?: string
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          owner_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
