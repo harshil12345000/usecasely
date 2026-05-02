@@ -12,7 +12,7 @@ interface Product {
   created_at: string;
 }
 
-const FN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate`;
+const FN_URL = "/functions/v1/generate";
 const DESC_PREVIEW = 100; // chars before truncation
 
 export default function Dashboard() {

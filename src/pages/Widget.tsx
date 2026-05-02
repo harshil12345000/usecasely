@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 
-const FN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate`;
+const FN_URL = "/functions/v1/generate";
 
 interface UseCase { title: string; description: string; }
 
@@ -61,7 +61,13 @@ export default function Widget() {
           description: description.trim() || undefined,
         }),
       });
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
+        throw new Error("Invalid response from server");
+      }
       if (!res.ok) throw new Error(data?.error || "Generation failed");
       const list: UseCase[] = data.use_cases || [];
       setResults(list);

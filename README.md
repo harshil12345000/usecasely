@@ -30,7 +30,8 @@ The easiest way to get started. Add an empty div and our script to your onboardi
 <script 
   src="https://usecasely.vercel.app/widget.js" 
   data-api-key="YOUR_PRODUCT_API_KEY"
-  data-target="#usecasely-widget">
+  data-target="#usecasely-widget"
+  data-fn-url="https://usecasely.vercel.app/functions/v1/generate">
 </script>
 ```
 

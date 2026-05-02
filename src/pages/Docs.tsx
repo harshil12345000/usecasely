@@ -11,7 +11,7 @@ export default function Docs() {
     const setupPrompt = `You are a Vibecode development agent. Your goal is to integrate Usecasely into this project to personalize use cases for each user.
 
 ### STEP 1: Get API Key
-- Navigate to https://usecasely.vercel.app/dashboard
+- Navigate to the Dashboard in this app
 - Sign in and create a new Product
 - Describe your product context (capabilities, audience, etc.)
 - Copy the generated API Key
@@ -20,7 +20,7 @@ export default function Docs() {
 - Add an empty div with id="usecasely-widget" where the use cases should appear
 - Include the Usecasely script tag:
   <div id="usecasely-widget"></div>
-  <script src="https://usecasely.vercel.app/widget.js" data-api-key="[YOUR_API_KEY]" data-target="#usecasely-widget"></script>
+  <script src="${window.location.origin}/widget.js" data-api-key="[YOUR_API_KEY]" data-target="#usecasely-widget" data-fn-url="${window.location.origin}/functions/v1/generate"></script>
 
 ### STEP 3: Verification
 - Visit the onboarding page
@@ -271,7 +271,8 @@ console.log(data.use_cases);`}</pre>
 <script
   src="${window.location.origin}/widget.js"
   data-api-key="YOUR_API_KEY"
-  data-target="#usecasely-widget">
+  data-target="#usecasely-widget"
+  data-fn-url="${window.location.origin}/functions/v1/generate">
 </script>`}</pre>
                     </div>
 
