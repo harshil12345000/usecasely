@@ -45,6 +45,7 @@ export default function Widget() {
   const [shown, setShown] = useState(0);
   const [productName, setProductName] = useState<string>("");
   const [session, setSession] = useState<any>(null);
+  const [myProducts, setMyProducts] = useState<{ id: string; name: string; api_key: string }[]>([]);
   const timers = useRef<number[]>([]);
 
   useEffect(() => {
@@ -55,6 +56,33 @@ export default function Widget() {
       timers.current.forEach(clearTimeout);
     };
   }, []);
+
+  // When logged in and no key in URL → load user's products and auto-pick the first.
+  useEffect(() => {
+    if (!session) { setMyProducts([]); return; }
+    let cancelled = false;
+    supabase
+      .from("products")
+      .select("id, name, api_key")
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        if (cancelled || !data) return;
+        setMyProducts(data);
+        if (!apiKey && data.length > 0) {
+          const k = data[0].api_key;
+          setApiKey(k);
+          window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#key=${encodeURIComponent(k)}`);
+        }
+      });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
+
+  const switchProduct = (key: string) => {
+    setApiKey(key);
+    setProductName("");
+    window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#key=${encodeURIComponent(key)}`);
+  };
 
   // Fetch product name once for the personalized helper text.
   useEffect(() => {
