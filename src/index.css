@@ -117,6 +117,23 @@
   color: var(--uc-black);
 }
 
+.badge-sharp {
+  border-radius: 0;
+  background: rgba(10, 10, 10, 0.85);
+  color: var(--uc-white);
+  border-color: rgba(10, 10, 10, 0.85);
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+.badge-sharp:hover {
+  background: rgba(10, 10, 10, 1);
+  border-color: rgba(10, 10, 10, 1);
+  color: var(--uc-white);
+}
+.badge-sharp u {
+  text-underline-offset: 2px;
+}
+
 .widget-main,
 .auth-main,
 .dash-main {
