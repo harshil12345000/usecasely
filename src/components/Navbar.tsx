@@ -42,7 +42,7 @@ export default function Navbar() {
                     href="https://zerocost.app/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="badge badge-link badge-sharp"
+                    className="badge badge-link badge-sharp bg-muted-foreground"
                 >
                     Kept Free by <u>Zerocost</u>
                 </a>
