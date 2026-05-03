@@ -6,6 +6,14 @@ export default function Footer() {
             <span className="footer-note">Powered by Usecasely</span>
             <div style={{ display: "flex", gap: "1.25rem", alignItems: "center" }}>
                 <a
+                    href="https://zerocost.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="badge badge-link badge-sharp"
+                >
+                    Kept Free by <u>Zerocost</u>
+                </a>
+                <a
                     href="https://www.linkedin.com/in/harshilsavla/"
                     target="_blank"
                     rel="noopener noreferrer"
