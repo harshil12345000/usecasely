@@ -203,7 +203,7 @@ Deno.serve(async (req: Request) => {
       return json({ error: "Rate limit exceeded (20 requests / 10 mins). Please upgrade for higher limits." }, 429);
     }
 
-    // ── Website scraping (with SSRF protection) ──────────────────────────
+    // ── Website content fetch via Jina Reader (LLM-ready markdown) ──────
     let scrapedContent: string | null = null;
     if (website) {
       try {
@@ -212,25 +212,19 @@ Deno.serve(async (req: Request) => {
         if (!check.ok) {
           console.warn("Rejected website URL (SSRF guard):", check.reason);
         } else {
-          const scrapeRes = await fetch(check.url.toString(), {
-            headers: {
-              "User-Agent": "Mozilla/5.0 (compatible; UsecaselyBot/1.0; +https://usecasely.dev)",
-              "Accept": "text/html,application/xhtml+xml",
-            },
-            signal: AbortSignal.timeout(6000),
-            redirect: "manual", // don't follow redirects — they could land on internal IPs
+          const JINA_API_KEY = Deno.env.get("JINA_API_KEY");
+          const jinaUrl = `https://r.jina.ai/${check.url.toString()}`;
+          const jinaHeaders: Record<string, string> = { "Accept": "text/plain" };
+          if (JINA_API_KEY) jinaHeaders["Authorization"] = `Bearer ${JINA_API_KEY}`;
+          const scrapeRes = await fetch(jinaUrl, {
+            headers: jinaHeaders,
+            signal: AbortSignal.timeout(15000),
           });
           if (scrapeRes.ok) {
-            const html = await scrapeRes.text();
-            scrapedContent = html
-              .replace(/<script[\s\S]*?<\/script>/gi, " ")
-              .replace(/<style[\s\S]*?<\/style>/gi, " ")
-              .replace(/<[^>]+>/g, " ")
-              .replace(/&[a-z]+;/g, " ")
-              .replace(/\s+/g, " ")
-              .trim()
-              .slice(0, 3000);
-            scrapedContent = sanitizeForPrompt(scrapedContent);
+            const md = await scrapeRes.text();
+            scrapedContent = sanitizeForPrompt(md).slice(0, 6000);
+          } else {
+            console.warn("Jina Reader failed:", scrapeRes.status);
           }
         }
       } catch (e) {
