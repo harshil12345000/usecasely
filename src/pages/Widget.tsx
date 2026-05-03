@@ -45,6 +45,7 @@ export default function Widget() {
   const [shown, setShown] = useState(0);
   const [productName, setProductName] = useState<string>("");
   const [session, setSession] = useState<any>(null);
+  const [myProducts, setMyProducts] = useState<{ id: string; name: string; api_key: string }[]>([]);
   const timers = useRef<number[]>([]);
 
   useEffect(() => {
@@ -55,6 +56,33 @@ export default function Widget() {
       timers.current.forEach(clearTimeout);
     };
   }, []);
+
+  // When logged in and no key in URL → load user's products and auto-pick the first.
+  useEffect(() => {
+    if (!session) { setMyProducts([]); return; }
+    let cancelled = false;
+    supabase
+      .from("products")
+      .select("id, name, api_key")
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        if (cancelled || !data) return;
+        setMyProducts(data);
+        if (!apiKey && data.length > 0) {
+          const k = data[0].api_key;
+          setApiKey(k);
+          window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#key=${encodeURIComponent(k)}`);
+        }
+      });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
+
+  const switchProduct = (key: string) => {
+    setApiKey(key);
+    setProductName("");
+    window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#key=${encodeURIComponent(key)}`);
+  };
 
   // Fetch product name once for the personalized helper text.
   useEffect(() => {
@@ -128,42 +156,48 @@ export default function Widget() {
             <span className="line" />
           </div>
           <div className="section-body">
-            {apiKey ? (
+            {session && myProducts.length > 0 ? (
+              <div className="product-picker">
+                <label className="hint" style={{ margin: 0 }}>Active product</label>
+                <select value={apiKey} onChange={(e) => switchProduct(e.target.value)}>
+                  {myProducts.map((p) => (
+                    <option key={p.id} value={p.api_key}>{p.name}</option>
+                  ))}
+                </select>
+                <p className="hint" style={{ margin: 0, fontSize: "0.65rem" }}>
+                  Using API key <code>{apiKey.slice(0, 10)}…</code>
+                </p>
+              </div>
+            ) : apiKey ? (
               <p className="hint" style={{ margin: 0 }}>
                 Using API key <code>{apiKey.slice(0, 10)}…</code>
                 {productName ? <> · <strong style={{ fontWeight: 400, color: "var(--uc-black)" }}>{productName}</strong></> : null}
               </p>
+            ) : session ? (
+              <div style={{
+                display: "flex", alignItems: "center", gap: "0.75rem", width: "100%",
+                padding: "0.875rem 1.25rem", background: "rgba(220, 38, 38, 0.06)",
+                border: "1.5px solid rgba(220, 38, 38, 0.35)", borderRadius: "8px",
+              }}>
+                <p className="hint" style={{ margin: 0, color: "rgba(185,28,28,0.9)" }}>
+                  No products yet. <Link to="/dashboard" style={{ color: "rgb(185,28,28)", fontWeight: 600 }}>Create one</Link> to get started.
+                </p>
+              </div>
             ) : (
               <div style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.75rem",
-                width: "100%",
-                padding: "0.875rem 1.25rem",
-                background: "rgba(220, 38, 38, 0.06)",
-                border: "1.5px solid rgba(220, 38, 38, 0.35)",
-                borderRadius: "8px",
+                display: "flex", alignItems: "center", gap: "0.75rem", width: "100%",
+                padding: "0.875rem 1.25rem", background: "rgba(220, 38, 38, 0.06)",
+                border: "1.5px solid rgba(220, 38, 38, 0.35)", borderRadius: "8px",
               }}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="rgba(220,38,38,0.85)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{ width: "20px", height: "20px", flexShrink: 0 }}
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                  stroke="rgba(220,38,38,0.85)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                  style={{ width: "20px", height: "20px", flexShrink: 0 }}>
                   <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
                   <line x1="12" y1="9" x2="12" y2="13" />
                   <line x1="12" y1="17" x2="12.01" y2="17" />
                 </svg>
                 <p className="hint" style={{ margin: 0, color: "rgba(185,28,28,0.9)" }}>
-                  {session ? (
-                    <>No API key provided. <Link to="/dashboard" style={{ color: "rgb(185,28,28)", fontWeight: 600 }}>Go to Dashboard</Link> to pick a product.</>
-                  ) : (
-                    <>No API key. <Link to="/auth" style={{ color: "rgb(185,28,28)", fontWeight: 600 }}>Sign in</Link> first to configure your product.</>
-                  )}
+                  No API key. <Link to="/auth" style={{ color: "rgb(185,28,28)", fontWeight: 600 }}>Sign in</Link> first to configure your product.
                 </p>
               </div>
             )}
