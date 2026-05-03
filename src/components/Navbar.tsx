@@ -37,6 +37,16 @@ export default function Navbar() {
             </Link>
             <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
 
+                {/* Sponsor */}
+                <a
+                    href="https://zerocost.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="badge badge-link badge-sharp"
+                >
+                    Kept Free by <u>Zerocost</u>
+                </a>
+
                 {/* Docs */}
                 {isDocs ? (
                     <span className="badge">Docs</span>
