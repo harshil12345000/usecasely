@@ -17,25 +17,37 @@ export type Database = {
       generations: {
         Row: {
           created_at: string
+          feedback_at: string | null
+          feedback_rating: string | null
+          feedback_text: string | null
           id: string
           product_id: string
           results: Json
+          scraped_content: string | null
           user_description: string | null
           user_website: string | null
         }
         Insert: {
           created_at?: string
+          feedback_at?: string | null
+          feedback_rating?: string | null
+          feedback_text?: string | null
           id?: string
           product_id: string
           results: Json
+          scraped_content?: string | null
           user_description?: string | null
           user_website?: string | null
         }
         Update: {
           created_at?: string
+          feedback_at?: string | null
+          feedback_rating?: string | null
+          feedback_text?: string | null
           id?: string
           product_id?: string
           results?: Json
+          scraped_content?: string | null
           user_description?: string | null
           user_website?: string | null
         }
@@ -45,6 +57,45 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_learnings: {
+        Row: {
+          created_at: string
+          id: string
+          lesson: string
+          product_id: string
+          source_generation_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lesson: string
+          product_id: string
+          source_generation_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lesson?: string
+          product_id?: string
+          source_generation_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_learnings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_learnings_source_generation_id_fkey"
+            columns: ["source_generation_id"]
+            isOneToOne: false
+            referencedRelation: "generations"
             referencedColumns: ["id"]
           },
         ]
