@@ -280,7 +280,7 @@ console.log(data.use_cases);`}</pre>
                         <div className="config-label">Or use the hosted preview</div>
                         <div className="config-inner">
                             <p className="docs-text">
-                                Visit <code>{window.location.origin}/demo?key=YOUR_API_KEY</code> to see
+                                Visit <code>{window.location.origin}/demo#key=YOUR_API_KEY</code> to see
                                 a full-page preview with your product's context.
                             </p>
                         </div>

@@ -125,7 +125,7 @@ export default function Dashboard() {
                   <div className="compact-key-row">
                     <code>{revealed ? p.api_key : "•".repeat(24)}</code>
                     <div style={{ display: "flex", gap: "0.75rem", flexShrink: 0 }}>
-                      <Link to={`/demo?key=${p.api_key}`} className="link-btn" style={{ fontWeight: 600, color: "var(--uc-black)" }}>Try it now</Link>
+                      <Link to={`/demo#key=${encodeURIComponent(p.api_key)}`} className="link-btn" style={{ fontWeight: 600, color: "var(--uc-black)" }}>Try it now</Link>
                       <button className="link-btn" onClick={() => setRevealedKey(revealed ? null : p.id)}>
                         {revealed ? "Hide" : "Reveal"}
                       </button>

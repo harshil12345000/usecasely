@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,9 +8,35 @@ const FN_URL = "/functions/v1/generate";
 
 interface UseCase { title: string; description: string; }
 
+// Read the API key from the URL hash fragment (e.g. /demo#key=uc_...).
+// Hash fragments are NOT sent to the server, do not appear in access logs,
+// and are stripped from the Referer header — much safer than a query param.
+function readKeyFromHash(): string {
+  if (typeof window === "undefined") return "";
+  const h = window.location.hash.replace(/^#/, "");
+  if (!h) return "";
+  const params = new URLSearchParams(h);
+  return params.get("key") || "";
+}
+
 export default function Widget() {
-  const [params] = useSearchParams();
-  const apiKey = params.get("key") || "";
+  const [apiKey, setApiKey] = useState<string>(() => readKeyFromHash());
+
+  // Migrate any legacy ?key=... links to the hash form, then strip from the URL.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    const legacyKey = url.searchParams.get("key");
+    if (legacyKey) {
+      url.searchParams.delete("key");
+      const newHash = `key=${encodeURIComponent(legacyKey)}`;
+      window.history.replaceState(null, "", `${url.pathname}${url.search}#${newHash}`);
+      setApiKey(legacyKey);
+    }
+    const onHash = () => setApiKey(readKeyFromHash());
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
   const [website, setWebsite] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
