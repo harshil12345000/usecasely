@@ -862,3 +862,168 @@ input::placeholder {
     display: none;
   }
 }
+/* ── Pill buttons (Dashboard product actions) ── */
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--uc-white);
+  border: 1px solid var(--uc-border);
+  color: var(--uc-black);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+}
+.pill-btn:hover { background: var(--uc-panel); border-color: var(--uc-black); }
+.pill-btn.primary { background: var(--uc-black); color: var(--uc-white); border-color: var(--uc-black); }
+.pill-btn.primary:hover { background: #222; }
+.pill-btn.danger { color: var(--uc-danger); border-color: rgba(220,38,38,0.35); }
+.pill-btn.danger:hover { background: rgba(220,38,38,0.06); border-color: var(--uc-danger); }
+.pill-btn.active { background: var(--uc-black); color: var(--uc-white); border-color: var(--uc-black); }
+
+.pill-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+/* ── Edit form inline ── */
+.inline-edit { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.75rem; }
+.inline-edit input,
+.inline-edit textarea {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--uc-border);
+  border-radius: 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  background: var(--uc-white);
+  color: var(--uc-black);
+  resize: vertical;
+}
+.inline-edit input:focus,
+.inline-edit textarea:focus { outline: none; border-color: var(--uc-black); }
+
+/* ── Logs panel ── */
+.logs-panel {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--uc-border);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.log-row {
+  border: 1px solid var(--uc-border);
+  border-radius: 4px;
+  padding: 0.85rem 1rem;
+  background: var(--uc-white);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--uc-black);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.log-row .log-meta {
+  font-size: 0.65rem;
+  color: var(--uc-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.log-section-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--uc-gray);
+  margin-bottom: 0.25rem;
+}
+.log-pre {
+  background: var(--uc-panel);
+  border: 1px solid var(--uc-border);
+  padding: 0.6rem 0.75rem;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 240px;
+  overflow: auto;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+.log-results { display: flex; flex-direction: column; gap: 0.4rem; }
+.log-result-item {
+  border-left: 2px solid var(--uc-black);
+  padding-left: 0.65rem;
+}
+.log-result-title { font-weight: 600; }
+.log-result-desc { color: var(--uc-gray); margin-top: 0.15rem; }
+
+.feedback-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--uc-border);
+}
+.feedback-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--uc-border);
+  border-radius: 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+}
+.feedback-given {
+  font-size: 0.65rem;
+  color: var(--uc-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Learnings list */
+.learnings-box {
+  border: 1px solid var(--uc-border);
+  border-radius: 4px;
+  padding: 0.85rem 1rem;
+  background: var(--uc-panel);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.learning-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.78rem;
+  font-family: 'DM Mono', monospace;
+  color: var(--uc-black);
+  padding: 0.3rem 0;
+  border-bottom: 1px dashed var(--uc-border);
+}
+.learning-item:last-child { border-bottom: none; }
+
+/* Product picker dropdown for /demo */
+.product-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.product-picker select {
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--uc-border);
+  border-radius: 4px;
+  background: var(--uc-white);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--uc-black);
+}
