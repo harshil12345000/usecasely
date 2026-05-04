@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const BASE = "https://usecasely.vercel.app/functions/v1/generate";
+const BASE = "https://usecasely.zerocost.app/functions/v1/generate";
 
 export default function Docs() {
     const [isCopied, setIsCopied] = useState(false);
