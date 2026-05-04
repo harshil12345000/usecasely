@@ -22,7 +22,7 @@ export default function Pricing() {
                     <h1 style={{ fontSize: "5rem", marginBottom: "0.5rem" }}>
                         FREE
                         <span style={{ fontSize: "1.5rem", fontWeight: 400, opacity: 0.6, marginLeft: "0.5rem" }}>
-                            forever
+                            (thanks to Zerocost)
                         </span>
                     </h1>
                     <p className="subtitle" style={{ fontSize: "1.2rem", maxWidth: "600px", margin: "0 auto" }}>
