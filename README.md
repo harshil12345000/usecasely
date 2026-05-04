@@ -19,7 +19,7 @@ Most users decide whether to stay or bounce within the first 30 seconds. If they
 ## 📖 Integration Guide
 
 ### 1. Get your API Key
-Sign up at [usecasely.vercel.app](https://usecasely.vercel.app/auth) and create your first product. Describe your product's core value proposition once, and we'll handle the AI logic.
+Sign up at [usecasely.zerocost.app](https://usecasely.zerocost.app/auth) and create your first product. Describe your product's core value proposition once, and we'll handle the AI logic.
 
 ### 2. Drop in the Widget
 The easiest way to get started. Add an empty div and our script to your onboarding or landing page:
@@ -28,10 +28,10 @@ The easiest way to get started. Add an empty div and our script to your onboardi
 <div id="usecasely-widget"></div>
 
 <script 
-  src="https://usecasely.vercel.app/widget.js" 
+  src="https://usecasely.zerocost.app/widget.js" 
   data-api-key="YOUR_PRODUCT_API_KEY"
   data-target="#usecasely-widget"
-  data-fn-url="https://usecasely.vercel.app/functions/v1/generate">
+  data-fn-url="https://usecasely.zerocost.app/functions/v1/generate">
 </script>
 ```
 
@@ -39,7 +39,7 @@ The easiest way to get started. Add an empty div and our script to your onboardi
 For custom UIs or backend integrations, call our generation endpoint:
 
 ```javascript
-const res = await fetch("https://usecasely.vercel.app/functions/v1/generate", {
+const res = await fetch("https://usecasely.zerocost.app/functions/v1/generate", {
   method: "POST",
   headers: { 
     "x-api-key": "YOUR_API_KEY", 
