@@ -25,10 +25,6 @@ export default function Pricing() {
                             (thanks to Zerocost)
                         </span>
                     </h1>
-                    <p className="subtitle" style={{ fontSize: "1.2rem", maxWidth: "600px", margin: "0 auto" }}>
-                        Building <em>Usecasely</em> as an open-source tool for the startup ecosystem.
-                        No hidden tiers, no usage caps on our hosted version.
-                    </p>
                 </section>
 
                 <div className="docs-block" style={{ maxWidth: "500px", margin: "0 auto", textAlign: "left", background: "white", padding: "2.5rem" }}>
